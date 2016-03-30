@@ -1,7 +1,8 @@
 ---
 title: 一致性哈希算法在Swift中的应用
 categories:
-- OpenStack/Swift
+- OpenStack
+- Swift
 tags:
 - OpenStack Swift
 - 一致性哈希
