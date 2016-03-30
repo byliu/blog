@@ -10,20 +10,20 @@ tags:
 
 > Created by byliu@iflytek.com
 
-## 1 前言 ##
+## 前言 ##
 
 在分布式对象存储中，一个关键问题是数据该如何存放。Swift是基于**一致性哈希**技术，通过计算可将对象均匀分布到虚拟空间的虚拟节点上，在增加或删除节点时可大大减少需移动的数据量。本文主要介绍一致性哈希在云存储Swift中具体应用。
 
-<!--more-->
+## 正文 ##
 
-## 2 正文 ##
-
-### 2.1 普通哈希算法与场景分析 ###
+### 普通哈希算法与场景分析 ###
 
 先来看一个简单的例子，假设我们手里有N台存储服务器（以下简称node），打算用于图片文件存储，为了使服务器的负载均衡，需要把对象均匀地映射到每台服务器上，通常会使用哈希算法来实现，计算步骤如下：
  
 1.	计算object的hash值Key
 2.	计算Key mod N值
+
+<!--more-->
       
 有N个存储节点，将Key模N得到的余数就是该Key对应的值需要存放的节点。比如，N是2，那么值为0、1、2、3、4的Key需要分别存放在0、1、0、1和0号节点上。如果哈希算法是均匀的，数据就会被平均分配到两个节点中。如果每个数据的访问量比较平均，负载也会被平均分配到两个节点上。
 
@@ -37,7 +37,7 @@ tags:
 
 一致性哈希算法就是为了解决这个问题而来。
 
-### 2.2 一致性哈希算法 ###
+### 一致性哈希算法 ###
       
 一致性哈希算法是由D. Darger、E. Lehman和T. Leighton 等人于1997年在论文 [Consistent Hashing and Random Trees:Distributed Caching Protocols for Relieving Hot Spots On the World Wide Web](https://www.akamai.com/us/en/multimedia/documents/technical-publication/consistent-hashing-and-random-trees-distributed-caching-protocols-for-relieving-hot-spots-on-the-world-wide-web-technical-publication.pdf) 首次提出，目的主要是为了解决分布式网络中的热点问题。在其论文中，提出了一致性哈希算法并给出了衡量一个哈希算法的4个指标：
 
@@ -78,7 +78,7 @@ Swift使用该算法的主要目的是在改变集群的node数量时（增加/�
 
 为了解决这个问题，我们引入**虚拟节点(Partition)**的概念
 
-### 2.3 虚拟节点(Partition) ###
+### 虚拟节点(Partition) ###
 
 前面也说道，一致性哈希算法在服务节点太少时，容易因为节点分部不均匀而造成数据倾斜问题。例如系统中只有两台服务器，其环分布如下：
 
@@ -96,11 +96,11 @@ Swift使用该算法的主要目的是在改变集群的node数量时（增加/�
 
 这样就解决了服务节点少时数据倾斜的问题。在实际应用中，通常将虚拟节点数设置为32甚至更大，因此即使很少的服务节点也能做到相对均匀的数据分布。
 
-### 2.4 权重(weight) ###
+### 权重(weight) ###
 
 基于虚拟节点(partition)，引入weight的概念，目的是“能者多劳”：解决未来添加存储能力更大的node时，使得可以分配到更多的虚拟节点(partition)。例如，2T 容量的node的虚拟节点(partition)数为1T的两倍。
 
-## 3 总结 ##
+## 总结 ##
 
 以上就是一致性哈希算法在云存储swift中的应用了，swift中的核心组件——Ring的实现就是基于此，当然Ring在实现上还有更多细节上优化的地方，这里略过不讲。
 
@@ -108,7 +108,7 @@ Swift使用该算法的主要目的是在改变集群的node数量时（增加/�
 
 本文只是简要介绍了这个算法，更深入的内容可以参看论文[Consistent Hashing and Random Trees:Distributed Caching Protocols for Relieving Hot Spots On the World Wide Web](https://www.akamai.com/us/en/multimedia/documents/technical-publication/consistent-hashing-and-random-trees-distributed-caching-protocols-for-relieving-hot-spots-on-the-world-wide-web-technical-publication.pdf)，同时提供一个[C语言版本的实现](http://www.codeproject.com/Articles/56138/Consistent-hashing)供参考。
 
-## 4 参考资料 ##
+## 参考资料 ##
 
 1.	核心论文：[Consistent Hashing and Random Trees:Distributed Caching Protocols for Relieving Hot Spots On the World Wide Web](https://www.akamai.com/us/en/multimedia/documents/technical-publication/consistent-hashing-and-random-trees-distributed-caching-protocols-for-relieving-hot-spots-on-the-world-wide-web-technical-publication.pdf)
 
