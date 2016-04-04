@@ -5,7 +5,7 @@ categories:
 - Linux
 tags:
 - Linux
-- rsyslog
+- Rsyslog
 ---
 
 最近在给私有云存储集群扩容，添加新机器的时候，发现相关日志没有打印出来，而业务功能上是正常的，怀疑是日志打印这块出了问题
