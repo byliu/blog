@@ -1,9 +1,9 @@
 ---
-title: python dic几种遍历方式性能简单比较
+title: python dict几种遍历方式性能简单比较
 date: 2016-04-04 17:21:52
 categories:
 - Python
-- Dic
+- Dict
 tags:
 - 性能
 ---
