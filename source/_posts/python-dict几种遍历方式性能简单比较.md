@@ -22,6 +22,7 @@ Python中对dict的遍历有很多种方法，本文中对几种方法性能进�
 
 dict_test.py
 
+```python
 	# -*- coding: utf-8 -*-
 	
 	l = [(x,x) for x in xrange(10000000)]
@@ -76,7 +77,7 @@ dict_test.py
 	while i < time_list.__len__() - 1:
 	    print "%d: %s" % (i, time_list[i + 1] - time_list[i])
 	    i = i + 1
-
+```
 
 ## 运行结果
 
@@ -116,7 +117,23 @@ dict_test.py
 
 ## 结论
 
-	for k,v in dict.items() >> for k,v in zip(d.iterkeys(),d.itervalues()) > for k,v in d.iteritems() > for i in d.keys() > for i in d.iterkeys() = for i in d
+一般情况下耗时排序(从大到小)
+
+	for k,v in dict.items()
+	>>
+	for k,v in zip(d.iterkeys(),d.itervalues())
+	>
+	for k,v in d.iteritems()
+	>
+	for i in d.keys()
+	>
+	for i in d.iterkeys()
+	=
+	for i in d
+
+可以知道，dict.items()方法的耗时要远远大于其他方法，特别是在数据量大的时候，要慎用
+
+其他几种方法的差别都不是很大，可以根据实际情况选择；其中dict.iteritems()效率较高，代码上也比较直观，推荐使用
 
 理解这几种遍历方式的差异的关键就在于理解dict.items()与dict.iteritems()的区别，dict.keys()和dict.iterkeys()也是类似
 

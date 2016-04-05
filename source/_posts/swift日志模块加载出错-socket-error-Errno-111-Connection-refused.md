@@ -48,7 +48,9 @@ tags:
 
 ## 解决办法
 
-	vim /etc/rsyslog.conf
+``` bash
+	$vim /etc/rsyslog.conf
+```
 
 添加
 

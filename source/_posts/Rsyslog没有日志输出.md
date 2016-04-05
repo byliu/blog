@@ -36,7 +36,9 @@ rsyslog 3.21.1以上支持“配置验证模式”。在这种模式下，它解
 
 也就是说我们可以通过执行
 
-	/path/to/rsyslogd -f/path/to/config-file -N1
+```bash
+	$/path/to/rsyslogd -f/path/to/config-file -N1
+```
 
 来检查我们的配置文件是否有误
 

@@ -17,7 +17,9 @@ tags:
 
 具体执行命令
 
-	git rm -r --cached dir
+```bash
+	$git rm -r --cached dir
+```
 
 然后我们再git status查看，是不是发现已经看不到该文件了，问题一解决
 
@@ -50,6 +52,8 @@ tags:
 
 执行
 
-	git rm -r --cached dirB
+```bash
+	$git rm -r --cached dirB
+```
 
 然后再重新Add、commit、push，问题解决
