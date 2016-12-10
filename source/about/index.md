@@ -7,12 +7,14 @@ comments: false
 
 # 关于我 #
 
+不要叫我程序员，最少，请叫我小文艺程序员 😂
+
 ## 教育经历 ##
 
     TBD
 
 ## 项目经历 ##
 
-瞎折腾中，搞搞开源技术
+Openstack Swift
 
     TBD
