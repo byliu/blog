@@ -29,26 +29,6 @@
 
     
   <url>
-    <loc>http://byliu.github.io/2016/03/30/Git-gitignore%E5%A4%B1%E6%95%88%EF%BC%8C%E6%97%A0%E6%B3%95%E5%8F%96%E6%B6%88%E6%9F%90%E6%96%87%E4%BB%B6-%E6%96%87%E4%BB%B6%E5%A4%B9%E8%B7%9F%E8%B8%AA%EF%BC%8C%E6%88%96%E6%97%A0%E6%B3%95%E8%B7%9F%E8%B8%AA%E6%9F%90%E6%96%87%E4%BB%B6-%E6%96%87%E4%BB%B6%E5%A4%B9%E7%9A%84%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/</loc>
-    <lastmod>2017-01-16T10:25:31.000Z</lastmod>
-    <data>
-        <display>
-        <title>Git .gitignore失效，无法取消某文件/文件夹跟踪，或无法跟踪某文件/文件夹的问题解决</title>
-        <pubTime>2016-03-30T15:26:33.000Z</pubTime>
-        
-        <tag>Git</tag>
-         
-         
-           
-             
-              <breadCrumb title="Git" url="http://byliu.github.io/categories/Git/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>http://byliu.github.io/2016/03/30/Rsyslog%E6%B2%A1%E6%9C%89%E6%97%A5%E5%BF%97%E8%BE%93%E5%87%BA/</loc>
     <lastmod>2017-01-16T10:25:31.000Z</lastmod>
     <data>
@@ -94,15 +74,20 @@
 
     
   <url>
-    <loc>http://byliu.github.io/2017/01/16/hello-world/</loc>
+    <loc>http://byliu.github.io/2016/03/30/Git-gitignore%E5%A4%B1%E6%95%88%EF%BC%8C%E6%97%A0%E6%B3%95%E5%8F%96%E6%B6%88%E6%9F%90%E6%96%87%E4%BB%B6-%E6%96%87%E4%BB%B6%E5%A4%B9%E8%B7%9F%E8%B8%AA%EF%BC%8C%E6%88%96%E6%97%A0%E6%B3%95%E8%B7%9F%E8%B8%AA%E6%9F%90%E6%96%87%E4%BB%B6-%E6%96%87%E4%BB%B6%E5%A4%B9%E7%9A%84%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/</loc>
     <lastmod>2017-01-16T10:25:31.000Z</lastmod>
     <data>
         <display>
-        <title>Hello World</title>
-        <pubTime>2017-01-16T10:25:31.000Z</pubTime>
+        <title>Git .gitignore失效，无法取消某文件/文件夹跟踪，或无法跟踪某文件/文件夹的问题解决</title>
+        <pubTime>2016-03-30T15:26:33.000Z</pubTime>
         
+        <tag>Git</tag>
+         
          
            
+             
+              <breadCrumb title="Git" url="http://byliu.github.io/categories/Git/"/>
+          
         </display>
     </data>
     </url>
