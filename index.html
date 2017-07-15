@@ -308,7 +308,7 @@
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
                 <a href="/2017/01/16/一致性哈希算法在Swift中的应用/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/16/一致性哈希算法在Swift中的应用/" itemprop="commentsCount"></span>
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/01/16/一致性哈希算法在Swift中的应用/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -445,7 +445,7 @@
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
                 <a href="/2017/01/16/Openstack-Swift-与负载均衡/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/16/Openstack-Swift-与负载均衡/" itemprop="commentsCount"></span>
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/01/16/Openstack-Swift-与负载均衡/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -571,7 +571,7 @@
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
                 <a href="/2016/04/04/python-dict几种遍历方式性能简单比较/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/04/04/python-dict几种遍历方式性能简单比较/" itemprop="commentsCount"></span>
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/04/04/python-dict几种遍历方式性能简单比较/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -702,7 +702,7 @@
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
                 <a href="/2016/04/04/swift日志模块加载出错-socket-error-Errno-111-Connection-refused/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/04/04/swift日志模块加载出错-socket-error-Errno-111-Connection-refused/" itemprop="commentsCount"></span>
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/04/04/swift日志模块加载出错-socket-error-Errno-111-Connection-refused/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -823,7 +823,7 @@
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
                 <a href="/2016/03/30/Git-gitignore失效，无法取消某文件-文件夹跟踪，或无法跟踪某文件-文件夹的问题解决/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/03/30/Git-gitignore失效，无法取消某文件-文件夹跟踪，或无法跟踪某文件-文件夹的问题解决/" itemprop="commentsCount"></span>
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/03/30/Git-gitignore失效，无法取消某文件-文件夹跟踪，或无法跟踪某文件-文件夹的问题解决/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -1106,26 +1106,28 @@
 
   
 
-  
-    
-  
 
-  <script type="text/javascript">
-    var duoshuoQuery = {short_name:"byliu"};
-    (function() {
-      var ds = document.createElement('script');
-      ds.type = 'text/javascript';ds.async = true;
-      ds.id = 'duoshuo-script';
-      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-      ds.charset = 'UTF-8';
-      (document.getElementsByTagName('head')[0]
-      || document.getElementsByTagName('body')[0]).appendChild(ds);
-    })();
-  </script>
 
   
 
+    <script type="text/javascript">
+      var disqus_shortname = 'byliu';
+      var disqus_identifier = 'index.html';
+      var disqus_title = '';
+      var disqus_url = '';
 
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+    </script>
+  
 
 
 
