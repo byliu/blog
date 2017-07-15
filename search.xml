@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title><![CDATA[Hello World]]></title>
+    <url>%2F2017%2F01%2F16%2Fhello-world%2F</url>
+    <content type="text"><![CDATA[Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick StartCreate a new post1$ hexo new "My New Post" More info: Writing Run server1$ hexo server More info: Server Generate static files1$ hexo generate More info: Generating Deploy to remote sites1$ hexo deploy More info: Deployment]]></content>
+  </entry>
+  <entry>
+    <title><![CDATA[一致性哈希算法在Swift中的应用]]></title>
+    <url>%2F2017%2F01%2F16%2F%E4%B8%80%E8%87%B4%E6%80%A7%E5%93%88%E5%B8%8C%E7%AE%97%E6%B3%95%E5%9C%A8Swift%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8%2F</url>
+    <content type="text"><![CDATA[Created by byliu@iflytek.com 前言在分布式对象存储中，一个关键问题是数据该如何存放。Swift是基于一致性哈希技术，通过计算可将对象均匀分布到虚拟空间的虚拟节点上，在增加或删除节点时可大大减少需移动的数据量。本文主要介绍一致性哈希在云存储Swift中具体应用。 正文普通哈希算法与场景分析先来看一个简单的例子，假设我们手里有N台存储服务器（以下简称node），打算用于图片文件存储，为了使服务器的负载均衡，需要把对象均匀地映射到每台服务器上，通常会使用哈希算法来实现，计算步骤如下： 计算object的hash值Key 计算Key mod N值 有N个存储节点，将Key模N得到的余数就是该Key对应的值需要存放的节点。比如，N是2，那么值为0、1、2、3、4的Key需要分别存放在0、1、0、1和0号节点上。如果哈希算法是均匀的，数据就会被平均分配到两个节点中。如果每个数据的访问量比较平均，负载也会被平均分配到两个节点上。 但是，当数据量和访问量进一步增加，两个节点无法满足需求的时候，需要增加一个节点来服务客户端的请求。这时，N变成了3，映射关系变成了Key mod (N+1)，因此，上述哈希值为2、3、4的数据需要重新分配（2-&gt;server 2，3 -&gt; server 0，4 -&gt; server 1）。如果数据量很大的话，那么数据量的迁移工作将会非常大。当N已经很大，从N加入一个节点变成N+1个节点的过程，会导致整个哈希环的重新分配，这个过程几乎是无法容忍的，几乎全部的数据都要重新移动一遍。 举例说明，假设有100个node的集群，将10^7项数据使用md5 hash算法分配到每个node中,现在假设增加一个节点提供负载能力，不过得重新分配数据项到新的节点上。 通过简单的计算我们可以发现，为了提高集群1%的存储能力，我们需要移动9900989个数据项，也就是99.01%的数据项！显然，这种算法严重地影响了系统的性能和可扩展性。 一致性哈希算法就是为了解决这个问题而来。 一致性哈希算法一致性哈希算法是由D. Darger、E. Lehman和T. Leighton 等人于1997年在论文 Consistent Hashing and Random Trees:Distributed Caching Protocols for Relieving Hot Spots On the World Wide Web 首次提出，目的主要是为了解决分布式网络中的热点问题。在其论文中，提出了一致性哈希算法并给出了衡量一个哈希算法的4个指标： 平衡性(Balance) 平衡性是指Hash的结果能够尽可能分布均匀，充分利用所有缓存空间。 单调性(Monotonicity) 单调性是指如果已经有一些内容通过哈希分派到了相应的缓冲中，又有新的缓冲加入到系统中。哈希的结果应能够保证原有已分配的内容可以被映射到新的缓冲中去，而不会被映射到旧的缓冲集合中的其他缓冲区。 分散性(Spread) 分散性定义了分布式环境中，不同终端通过Hash过程将内容映射至缓存上时，因可见缓存不同，Hash结果不一致，相同的内容被映射至不同的缓冲区。 负载(Load) 负载是对分散性要求的另一个纬度。既然不同的终端可以将相同的内容映射到不同的缓冲区中，那么对于一个特定的缓冲区而言，也可能被不同的用户映射为不同的内容。 Swift使用该算法的主要目的是在改变集群的node数量时（增加/删除服务器），能够尽可能少地改变已存在key和node的映射关系，以满足单调性。一致性哈希一般两种思路： 迁移为主要特点(swift初期采用) 引入虚结点，减少移动为特点(swift现采用) 具体步骤如下： 首先求出每个节点(机器名或者是IP地址)的哈希值，并将其分配到一个圆环区间上（这里取0-2^32)。 求出需要存储对象的哈希值，也将其分配到这个圆环上。 从对象映射到的位置开始顺时针查找，将对象保存到找到的第一个节点上。 其中这个从哈希到位置映射的圆环，叫做哈希环(Ring)。哈希环空间上的分布如下图所示： 假设在这个环形哈希空间中，新增一个node5，node5被映射在node2和node4之间，那么受影响的将仅是沿node5逆时针遍历直到下一个node（node2）之间的对象（它们本来映射到node4上）。如下图所示： 通过前面的分析可以知道，一致性哈希算法对于节点的增加(或减少)都只需重定位环空间中的一小部分数据，具有较好的容错性和可扩展性。 但是上边描述的一致性Hash算法还有两个潜在的问题: 将节点hash后会不均匀地分布在环上，这样大量key在寻找节点时，会存在key命中各个节点的概率差别较大，无法实现有效的负载均衡。 如有三个节点Node1,Node2,Node3，分布在环上时三个节点挨的很近，落在环上的key寻找节点时，大量key顺时针总是分配给Node2，而其它两个节点被找到的概率都会很小。 为了解决这个问题，我们引入虚拟节点(Partition)的概念 虚拟节点(Partition)前面也说道，一致性哈希算法在服务节点太少时，容易因为节点分部不均匀而造成数据倾斜问题。例如系统中只有两台服务器，其环分布如下： 此时必然造成大量数据集中到Node A上，而只有极少量会定位到Node B上。 考虑到哈希算法在node较少的情况下，改变node数会带来巨大的数据迁移。为此一致性哈希引入了“虚拟节点”的概念： “虚拟节点”是实际节点在环形空间的复制品，一个实际节点对应了若干个“虚拟节点”，“虚拟节点”在哈希空间中以哈希值排列。如下图： 引入了“虚拟节点”后，映射关系就从[object—&gt;node]转换成了[object—&gt;virtual node—&gt; node]。查询object所在node的映射关系如下图所示。 这样就解决了服务节点少时数据倾斜的问题。在实际应用中，通常将虚拟节点数设置为32甚至更大，因此即使很少的服务节点也能做到相对均匀的数据分布。 权重(weight)基于虚拟节点(partition)，引入weight的概念，目的是“能者多劳”：解决未来添加存储能力更大的node时，使得可以分配到更多的虚拟节点(partition)。例如，2T 容量的node的虚拟节点(partition)数为1T的两倍。 总结以上就是一致性哈希算法在云存储swift中的应用了，swift中的核心组件——Ring的实现就是基于此，当然Ring在实现上还有更多细节上优化的地方，这里略过不讲。 一致性哈希算法除了在云存储swift中解决存储数据节点均衡问题外，在很多场景下也得到了应用，比如分布式cache系统(参考资料1)、服务器均衡(参考资料3)等。 本文只是简要介绍了这个算法，更深入的内容可以参看论文Consistent Hashing and Random Trees:Distributed Caching Protocols for Relieving Hot Spots On the World Wide Web，同时提供一个C语言版本的实现供参考。 参考资料 核心论文：Consistent Hashing and Random Trees:Distributed Caching Protocols for Relieving Hot Spots On the World Wide Web memcache的一致性hash算法使用 一致性Hash算法背景 一致性哈希算法（用于解决服务器均衡问题） 每天进步一点点——五分钟理解一致性哈希算法(consistent hashing) 深入云存储系统Swift核心组件：Ring实现原理剖析 一致性哈希算法及其在分布式系统中的应用]]></content>
+      <categories>
+        <category>OpenStack</category>
+        <category>Swift</category>
+      </categories>
+      <tags>
+        <tag>OpenStack Swift</tag>
+        <tag>一致性哈希</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Openstack Swift 与负载均衡]]></title>
+    <url>%2F2017%2F01%2F16%2FOpenstack-Swift-%E4%B8%8E%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%2F</url>
+    <content type="text"></content>
+      <categories>
+        <category>OpenStack</category>
+        <category>Swift</category>
+      </categories>
+      <tags>
+        <tag>性能</tag>
+        <tag>负载均衡</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[python dict几种遍历方式性能简单比较]]></title>
+    <url>%2F2016%2F04%2F04%2Fpython-dict%E5%87%A0%E7%A7%8D%E9%81%8D%E5%8E%86%E6%96%B9%E5%BC%8F%E6%80%A7%E8%83%BD%E7%AE%80%E5%8D%95%E6%AF%94%E8%BE%83%2F</url>
+    <content type="text"><![CDATA[Python中对dict的遍历有很多种方法，本文中对几种方法性能进行比较简单的对比，给大家一个参考 测试环境Windows10 + Python2.7.8 测试代码首先看我们的测试代码 dict_test.py 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354# -*- coding: utf-8 -*-l = [(x,x) for x in xrange(10000000)]d = dict(l) from time import clock time_list = []time_list.append(clock())#print d#该方法内部实现还不清楚，效率很高，感觉和dict.iterkeys()类似，待考证for i in d: t = i + d[i] #print "%d, %d" % (i, d[i])time_list.append(clock())#print d.keys()#调用内置方法dict.keys()，该方法将字典中的键以列表的形式返回for i in d.keys(): t = i + d[i]time_list.append(clock())#print d.iterkeys()#调用内置方法dict.iterkeys()，该方法返回针对键的迭代器for i in d.iterkeys(): t = i + d[i]time_list.append(clock())#print d.items()#dict.items()，items方法将所有字典项以列表方式返回，这些列表项中的每一项都来自于（键、值），但是在项返回时并没有特殊顺序for k,v in d.items(): t = k + vtime_list.append(clock())#print d.iteritems()#dict.iteritems()，iteritems作用大致一样，但是会返回一个迭代器对象而不是列表for k,v in d.iteritems(): t = k + vtime_list.append(clock())#补充 items()返回的是一个列表，所以当dict很大时会消耗大量内存。在python3中，items()进行了优化，也只返回迭代器，所以取消iteritems方法#print zip(d.iterkeys(),d.itervalues())#zip函数接受任意多个（包括0个和1个）序列作为参数，返回一个tuple列表#关于zip函数的详细说明可以参考 http://www.cnblogs.com/frydsh/archive/2012/07/10/2585370.htmlfor k,v in zip(d.iterkeys(),d.itervalues()): t = k + vtime_list.append(clock())#打印各个方法所花时间i = 0while i &lt; time_list.__len__() - 1: print "%d: %s" % (i, time_list[i + 1] - time_list[i]) i = i + 1 运行结果运行四次 第一次 0: 2.55650656968 1: 2.81541793721 2: 2.60263192552 3: 13.3213878899 4: 2.88246335262 5: 4.9362081227 第二次 0: 2.59641417876 1: 2.66579489621 2: 2.57118659521 3: 14.0514050106 4: 3.30343528077 5: 5.3133750038 第三次 0: 2.54319498334 1: 2.71084397889 2: 2.50744050815 3: 13.2553875455 4: 2.92418555176 5: 4.9001545927 第四次 0: 2.61268754242 1: 2.72744719433 2: 2.73589164328 3: 13.613833514 4: 3.02585041181 5: 5.39626910881 结论一般情况下耗时排序(从大到小) for k,v in dict.items() &gt;&gt; for k,v in zip(d.iterkeys(),d.itervalues()) &gt; for k,v in d.iteritems() &gt; for i in d.keys() &gt; for i in d.iterkeys() = for i in d 可以知道，dict.items()方法的耗时要远远大于其他方法，特别是在数据量大的时候，要慎用 其他几种方法的差别都不是很大，可以根据实际情况选择；其中dict.iteritems()效率较高，代码上也比较直观，推荐使用 理解这几种遍历方式的差异的关键就在于理解dict.items()与dict.iteritems()的区别，dict.keys()和dict.iterkeys()也是类似 items()返回的是一个列表，所以当dict很大时会消耗大量内存，iteritems作用大致一样，但是会返回一个迭代器对象而不是列表。在python3中，items()进行了优化，也只返回迭代器，所以取消iteritems方法]]></content>
+      <categories>
+        <category>Python</category>
+        <category>Dict</category>
+      </categories>
+      <tags>
+        <tag>性能</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[swift日志模块加载出错 socket.error: [Errno 111] Connection refused]]></title>
+    <url>%2F2016%2F04%2F04%2Fswift%E6%97%A5%E5%BF%97%E6%A8%A1%E5%9D%97%E5%8A%A0%E8%BD%BD%E5%87%BA%E9%94%99-socket-error-Errno-111-Connection-refused%2F</url>
+    <content type="text"><![CDATA[最近在龟速整理笔记中 发现这条笔记感觉还挺有用的，贴出来分享下 报错配置swift完成后，启动swift相关服务时报错 socket.error: [Errno 111] Connection refused 详细错误提示 root@ubuntu:/etc/swift# swift-init account restart -n Signal account-server pid: 22679 signal: 15 No account-server running Starting account-server...(/etc/swift/account-server/1.conf) Traceback (most recent call last): File &quot;/usr/local/bin/swift-account-server&quot;, line 23, in &lt;module&gt; sys.exit(run_wsgi(conf_file, &apos;account-server&apos;, **options)) File &quot;/usr/local/lib/python2.7/dist-packages/swift/common/wsgi.py&quot;, line 455, in run_wsgi _initrp(conf_path, app_section, *args, **kwargs) File &quot;/usr/local/lib/python2.7/dist-packages/swift/common/wsgi.py&quot;, line 565, in _initrp log_route=&apos;wsgi&apos;) File &quot;/usr/local/lib/python2.7/dist-packages/swift/common/utils.py&quot;, line 1481, in get_logger raise e socket.error: [Errno 111] Connection refused 参考资料 http://www.rsyslog.com/doc/v8-stable/configuration/modules/imuxsock.html 原因 rsyslog 没有对/dev/log监听导致 解决办法1$vim /etc/rsyslog.conf 添加 $AddUnixListenSocket /dev/log 然后再重启相关服务，正常 问题解决]]></content>
+      <categories>
+        <category>OpenStack</category>
+        <category>Swift</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Rsyslog</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Git .gitignore失效，无法取消某文件/文件夹跟踪，或无法跟踪某文件/文件夹的问题解决]]></title>
+    <url>%2F2016%2F03%2F30%2FGit-gitignore%E5%A4%B1%E6%95%88%EF%BC%8C%E6%97%A0%E6%B3%95%E5%8F%96%E6%B6%88%E6%9F%90%E6%96%87%E4%BB%B6-%E6%96%87%E4%BB%B6%E5%A4%B9%E8%B7%9F%E8%B8%AA%EF%BC%8C%E6%88%96%E6%97%A0%E6%B3%95%E8%B7%9F%E8%B8%AA%E6%9F%90%E6%96%87%E4%BB%B6-%E6%96%87%E4%BB%B6%E5%A4%B9%E7%9A%84%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%2F</url>
+    <content type="text"><![CDATA[问题一明明在.gitignore文件中设置了取消跟踪某文件，每次git status时却总能看到它，仿佛.gitignore对它不起作用一样 原因分析：我们要知道的是，.gitignore只对未被track的文件有效，也就是说，一个文件如果已经被跟踪并加入缓存中后，后面如果想要取消该文件的跟踪的话，直接将其加入.gitignore文件中是不行的，我们需要先将其从本地缓存中删除它，然后再添加进.gitignore忽略 具体执行命令 1$git rm -r --cached dir 然后我们再git status查看，是不是发现已经看不到该文件了，问题一解决 问题二场景：A项目下有一个子项目B，两个项目都由Git管理 其目录结构大概如下 A/ ----.git/ ----dir/ ----B/ ----.git/ ----dir/ 然后我们A项目git push提交Github托管，问题来了，我们登陆Github查看A项目时发现，A下面的B文件夹是空的 为什么呢，原因其实很简单，因为B目录下有.git时，git会自动忽略该目录下的所有文件，导致我们push了一个空目录 这样的话解决思路也很简单了，删除B目录下的.git(删除.git的操作是十分危险的，这里是为了举例说明，不要轻易模仿)，然后再重新添加 完成后再push，我们发现B目录还是空的！并且我们检查.gitignore文件，发现B目录并没有被添加进去，好像.gitignore又失效了一样 原因分析：git add 添加文件时，git扫描到B目录下的.git文件后，跟踪B目录，并忽略B目录下的子文件，也就是说，git把B这个空文件夹加进了缓存里，后面对B文件下的子文件的操作都会被忽略，删除B目录下的.git后，B目录下的子文件仍然处于被忽略状态 解决办法和上面一样，我们删除B目录下的.git后，删除本地缓存 执行 1$git rm -r --cached dirB 然后再重新Add、commit、push，问题解决]]></content>
+      <categories>
+        <category>Git</category>
+      </categories>
+      <tags>
+        <tag>Git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Rsyslog没有日志输出]]></title>
+    <url>%2F2016%2F03%2F30%2FRsyslog%E6%B2%A1%E6%9C%89%E6%97%A5%E5%BF%97%E8%BE%93%E5%87%BA%2F</url>
+    <content type="text"><![CDATA[最近在给私有云存储集群扩容，添加新机器的时候，发现相关日志没有打印出来，而业务功能上是正常的，怀疑是日志打印这块出了问题 机器打印日志用的是rsyslog模块，检查对比了相关配置项后未发现问题，rsyslog进程也正常，未报错，比较奇怪的现象 思索无果下，就只能一步一步看日志来尝试解决了 查看/var/log/messages，最后一条日志是 Mar 30 00:19:12 localhost rsyslogd: [origin software=&quot;rsyslogd&quot; swVersion=&quot;7.4.7&quot; x-pid=&quot;903&quot; x-info=&quot;http://www.rsyslog.com&quot;] exiting on signal 15. 这里初现端倪，在凌晨的时候rsyslogd进程莫名退出了 原因呢，不清楚，Google it，找到了些资料， 参考 http://askubuntu.com/questions/249490/rsyslogd-stopped-writing-to-var-log-syslog-two-days-ago https://bugzilla.redhat.com/show_bug.cgi?id=1116864 看来还是配置项的问题 rsyslog 3.21.1以上支持“配置验证模式”。在这种模式下，它解释和检查配置文件，但不启动。 也就是说我们可以通过执行 1$/path/to/rsyslogd -f/path/to/config-file -N1 来检查我们的配置文件是否有误 配置文件在/etc/rsyslog.d/下，根据资料我们执行 [root@swift-node1 rsyslog.d]# rsyslogd -f/etc/rsyslog.d/listen.conf -N1 rsyslogd: version 7.4.7, config validation run (level 1), master config /etc/rsyslog.d/listen.conf rsyslogd: invalid or yet-unknown config file command &apos;SystemLogSocketName&apos; - have you forgotten to load a module? [try http://www.rsyslog.com/e/3003 ] rsyslogd: CONFIG ERROR: there are no active actions configured. Inputs will run, but no output whatsoever is created. [try http://www.rsyslog.com/e/2103 ] rsyslogd: run failed with error -2103 (see rsyslog.h or try http://www.rsyslog.com/e/2103 to learn what that number means) 嗯，报错了 看到这怀疑可能是/etc/rsyslog.d/listen.conf配置文件的问题了， 删除(记得备份) /etc/rsyslog.d/listen.conf 然后重启rsyslog服务，再重启相关业务，发现相关日志已经有了，问题解决]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Rsyslog</tag>
+      </tags>
+  </entry>
+</search>
