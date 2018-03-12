@@ -41,7 +41,7 @@
 <link href="/css/main.css?v=0.5.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="OpenStack Swift,一致性哈希," />
+  <meta name="keywords" content="Linux,负载均衡," />
 
 
 
@@ -59,24 +59,26 @@
 
 
 
-<meta name="description" content="Created by byliu@iflytek.com  前言在分布式对象存储中，一个关键问题是数据该如何存放。Swift是基于一致性哈希技术，通过计算可将对象均匀分布到虚拟空间的虚拟节点上，在增加或删除节点时可大大减少需移动的数据量。本文主要介绍一致性哈希在云存储Swift中具体应用。 正文普通哈希算法与场景分析先来看一个简单的例子，假设我们手里有N台存储服务器（以下简称node），打算用于">
-<meta name="keywords" content="OpenStack Swift,一致性哈希">
+<meta name="description" content="前言介绍常用的负载均衡手段 现网方案与问题 haproxy + keepalived 实现负载均衡和高可用 问题： haproxy 节点容易成为瓶颈">
+<meta name="keywords" content="Linux,负载均衡">
 <meta property="og:type" content="article">
-<meta property="og:title" content="一致性哈希算法在Swift中的应用">
-<meta property="og:url" content="http://byliu.github.io/2017/01/16/一致性哈希算法在Swift中的应用/index.html">
+<meta property="og:title" content="对象存储与负载均衡">
+<meta property="og:url" content="http://byliu.github.io/2018/03/12/对象存储与负载均衡/index.html">
 <meta property="og:site_name" content="Byliu&#39;s Blog">
-<meta property="og:description" content="Created by byliu@iflytek.com  前言在分布式对象存储中，一个关键问题是数据该如何存放。Swift是基于一致性哈希技术，通过计算可将对象均匀分布到虚拟空间的虚拟节点上，在增加或删除节点时可大大减少需移动的数据量。本文主要介绍一致性哈希在云存储Swift中具体应用。 正文普通哈希算法与场景分析先来看一个简单的例子，假设我们手里有N台存储服务器（以下简称node），打算用于">
-<meta property="og:image" content="http://byliu.bj.openstorage.cn/byliu/普通HASH移动数据.gif">
-<meta property="og:image" content="http://byliu.bj.openstorage.cn/byliu/哈希环空间.png">
-<meta property="og:image" content="http://byliu.bj.openstorage.cn/byliu/一致性哈希算法的数据移动.png">
-<meta property="og:image" content="http://byliu.bj.openstorage.cn/byliu/两节点不平衡环.png">
-<meta property="og:image" content="http://byliu.bj.openstorage.cn/byliu/虚拟节点.jpg">
-<meta property="og:image" content="http://byliu.bj.openstorage.cn/byliu/对象、虚结点、节点间的映射关系.jpg">
-<meta property="og:updated_time" content="2017-01-16T10:25:31.000Z">
+<meta property="og:description" content="前言介绍常用的负载均衡手段 现网方案与问题 haproxy + keepalived 实现负载均衡和高可用 问题： haproxy 节点容易成为瓶颈">
+<meta property="og:image" content="http://byliu.bj.openstorage.cn/byliu/现网方案与问题.png">
+<meta property="og:image" content="http://byliu.bj.openstorage.cn/byliu/Load Blance.png">
+<meta property="og:image" content="http://byliu.bj.openstorage.cn/byliu/基于RR-DNS的解决方法.png">
+<meta property="og:image" content="http://byliu.bj.openstorage.cn/byliu/基于客户端的解决方法.png">
+<meta property="og:image" content="http://byliu.bj.openstorage.cn/byliu/基于应用层的解决办法.png">
+<meta property="og:image" content="http://byliu.bj.openstorage.cn/byliu/LVS之NAT实现（VS:NAT）.png">
+<meta property="og:image" content="http://byliu.bj.openstorage.cn/byliu/LVS之IP隧道实现（VS:TUN）.png">
+<meta property="og:image" content="http://byliu.bj.openstorage.cn/byliu/LVS之直接路由实现（VS:DR）.png">
+<meta property="og:updated_time" content="2018-03-12T07:31:00.914Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="一致性哈希算法在Swift中的应用">
-<meta name="twitter:description" content="Created by byliu@iflytek.com  前言在分布式对象存储中，一个关键问题是数据该如何存放。Swift是基于一致性哈希技术，通过计算可将对象均匀分布到虚拟空间的虚拟节点上，在增加或删除节点时可大大减少需移动的数据量。本文主要介绍一致性哈希在云存储Swift中具体应用。 正文普通哈希算法与场景分析先来看一个简单的例子，假设我们手里有N台存储服务器（以下简称node），打算用于">
-<meta name="twitter:image" content="http://byliu.bj.openstorage.cn/byliu/普通HASH移动数据.gif">
+<meta name="twitter:title" content="对象存储与负载均衡">
+<meta name="twitter:description" content="前言介绍常用的负载均衡手段 现网方案与问题 haproxy + keepalived 实现负载均衡和高可用 问题： haproxy 节点容易成为瓶颈">
+<meta name="twitter:image" content="http://byliu.bj.openstorage.cn/byliu/现网方案与问题.png">
 
 
 
@@ -94,7 +96,7 @@
   };
 </script>
 
-  <title> 一致性哈希算法在Swift中的应用 | Byliu's Blog </title>
+  <title> 对象存储与负载均衡 | Byliu's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -257,7 +259,7 @@
             
             
               
-                一致性哈希算法在Swift中的应用
+                对象存储与负载均衡
               
             
           </h1>
@@ -269,8 +271,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-01-16T18:25:31+08:00" content="2017-01-16">
-              2017-01-16
+            <time itemprop="dateCreated" datetime="2018-03-12T14:48:38+08:00" content="2018-03-12">
+              2018-03-12
             </time>
           </span>
 
@@ -283,20 +285,8 @@
               <span class="post-meta-item-text">分类于</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/OpenStack/" itemprop="url" rel="index">
-                    <span itemprop="name">OpenStack</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/OpenStack/Swift/" itemprop="url" rel="index">
-                    <span itemprop="name">Swift</span>
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
                   </a>
                 </span>
 
@@ -311,8 +301,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2017/01/16/一致性哈希算法在Swift中的应用/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/01/16/一致性哈希算法在Swift中的应用/" itemprop="commentsCount"></span>
+                <a href="/2018/03/12/对象存储与负载均衡/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/03/12/对象存储与负载均衡/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -334,91 +324,90 @@
       
 
       
-        <blockquote>
-<p>Created by byliu@iflytek.com</p>
-</blockquote>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在分布式对象存储中，一个关键问题是数据该如何存放。Swift是基于<strong>一致性哈希</strong>技术，通过计算可将对象均匀分布到虚拟空间的虚拟节点上，在增加或删除节点时可大大减少需移动的数据量。本文主要介绍一致性哈希在云存储Swift中具体应用。</p>
-<h2 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h2><h3 id="普通哈希算法与场景分析"><a href="#普通哈希算法与场景分析" class="headerlink" title="普通哈希算法与场景分析"></a>普通哈希算法与场景分析</h3><p>先来看一个简单的例子，假设我们手里有N台存储服务器（以下简称node），打算用于图片文件存储，为了使服务器的负载均衡，需要把对象均匀地映射到每台服务器上，通常会使用哈希算法来实现，计算步骤如下：</p>
-<ol>
-<li>计算object的hash值Key</li>
-<li>计算Key mod N值</li>
-</ol>
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>介绍常用的负载均衡手段</p>
+<h2 id="现网方案与问题"><a href="#现网方案与问题" class="headerlink" title="现网方案与问题"></a>现网方案与问题</h2><p> haproxy + keepalived 实现负载均衡和高可用</p>
+<p>问题：</p>
+<p>haproxy 节点容易成为瓶颈</p>
+<p><img src="http://byliu.bj.openstorage.cn/byliu/现网方案与问题.png" alt="现网方案与问题"></p>
 <a id="more"></a>
-<p>有N个存储节点，将Key模N得到的余数就是该Key对应的值需要存放的节点。比如，N是2，那么值为0、1、2、3、4的Key需要分别存放在0、1、0、1和0号节点上。如果哈希算法是均匀的，数据就会被平均分配到两个节点中。如果每个数据的访问量比较平均，负载也会被平均分配到两个节点上。</p>
-<p>但是，当数据量和访问量进一步增加，两个节点无法满足需求的时候，需要增加一个节点来服务客户端的请求。这时，N变成了3，映射关系变成了Key mod (N+1)，因此，上述哈希值为2、3、4的数据需要重新分配（2-&gt;server 2，3 -&gt; server 0，4 -&gt; server 1）。如果数据量很大的话，那么数据量的迁移工作将会非常大。当N已经很大，从N加入一个节点变成N+1个节点的过程，会导致整个哈希环的重新分配，这个过程几乎是无法容忍的，几乎全部的数据都要重新移动一遍。</p>
-<p>举例说明，假设有100个node的集群，将10^7项数据使用md5 hash算法分配到每个node中,现在假设增加一个节点提供负载能力，不过得重新分配数据项到新的节点上。</p>
-<p>通过简单的计算我们可以发现，为了提高集群1%的存储能力，我们需要移动9900989个数据项，也就是99.01%的数据项！显然，这种算法严重地影响了系统的性能和可扩展性。</p>
-<p><img src="http://byliu.bj.openstorage.cn/byliu/普通HASH移动数据.gif" alt="增加1%的存储能力=移动99%的数据" title="增加1%的存储能力=移动99%的数据"></p>
-<p>一致性哈希算法就是为了解决这个问题而来。</p>
-<h3 id="一致性哈希算法"><a href="#一致性哈希算法" class="headerlink" title="一致性哈希算法"></a>一致性哈希算法</h3><p>一致性哈希算法是由D. Darger、E. Lehman和T. Leighton 等人于1997年在论文 <a href="https://www.akamai.com/us/en/multimedia/documents/technical-publication/consistent-hashing-and-random-trees-distributed-caching-protocols-for-relieving-hot-spots-on-the-world-wide-web-technical-publication.pdf" target="_blank" rel="external">Consistent Hashing and Random Trees:Distributed Caching Protocols for Relieving Hot Spots On the World Wide Web</a> 首次提出，目的主要是为了解决分布式网络中的热点问题。在其论文中，提出了一致性哈希算法并给出了衡量一个哈希算法的4个指标：</p>
+<h2 id="Load-Balance"><a href="#Load-Balance" class="headerlink" title="Load Balance"></a>Load Balance</h2><p>在网络服务中，一端是客户程序，另一端是服务程序</p>
+<p>通过 LB 将 client 请求分发到存储入口 swift proxy 上</p>
+<p><img src="http://byliu.bj.openstorage.cn/byliu/Load Blance.png" alt="Load Blance"></p>
+<h3 id="基本方法"><a href="#基本方法" class="headerlink" title="基本方法"></a>基本方法</h3><p> 可以在不同的层次上实现多台服务器的负载均衡。用集群解决网络服务性能问题的现有方法主要分为以下四类： </p>
+<ol>
+<li>基于RR-DNS的解决方法</li>
+<li>基于客户端的解决方法</li>
+<li>基于应用层负载均衡调度的解决方法</li>
+<li>基于 IP 层负载均衡调度的解决方法</li>
+</ol>
+<h3 id="基于RR-DNS的解决方法"><a href="#基于RR-DNS的解决方法" class="headerlink" title="基于RR-DNS的解决方法"></a>基于RR-DNS的解决方法</h3><p> 通过RR-DNS（Round-Robin Domain Name System）实现分流</p>
+<p><img src="http://byliu.bj.openstorage.cn/byliu/基于RR-DNS的解决方法.png" alt="基于RR-DNS的解决方法"></p>
+<p>RR-DNS总结</p>
+<p> 优点</p>
 <ul>
-<li>平衡性(Balance)<ul>
-<li>平衡性是指Hash的结果能够尽可能分布均匀，充分利用所有缓存空间。</li>
+<li><p>部署简单</p>
+<p>缺点</p>
+</li>
+<li><p>不能保证后端服务器的负载是均衡的</p>
+</li>
+<li>用户机器会缓冲从名字到IP地址的映射，同一用户的所有请求都会被发送到同一台机器上</li>
+<li>系统的可靠性和可维护性差，一旦某个服务器出现故障，即使及时修改了 DNS 设置，还是要等待足够的时间（刷新时间）才能发挥作用，在此期间，保存了故障服务器地址的客户计算机将不能正常访问服务器</li>
 </ul>
-</li>
-<li>单调性(Monotonicity)<ul>
-<li>单调性是指如果已经有一些内容通过哈希分派到了相应的缓冲中，又有新的缓冲加入到系统中。哈希的结果应能够保证原有已分配的内容可以被映射到新的缓冲中去，而不会被映射到旧的缓冲集合中的其他缓冲区。</li>
+<h3 id="基于客户端的解决方法"><a href="#基于客户端的解决方法" class="headerlink" title="基于客户端的解决方法"></a>基于客户端的解决方法</h3><p>每个客户程序都有一定的服务器集群的知识，进而把以负载均衡的方式将请求发到不同的服务器</p>
+<p><img src="http://byliu.bj.openstorage.cn/byliu/基于客户端的解决方法.png" alt="基于客户端的解决方法"></p>
+<p>基于客户端方法总结</p>
+<p>缺点</p>
+<ul>
+<li>需要另外维护一套 nameserver 之类的服务</li>
+<li>需要客户端配合</li>
+<li>nameserver 的性能直接影响服务请求性能</li>
 </ul>
-</li>
-<li>分散性(Spread)<ul>
-<li>分散性定义了分布式环境中，不同终端通过Hash过程将内容映射至缓存上时，因可见缓存不同，Hash结果不一致，相同的内容被映射至不同的缓冲区。</li>
+<h3 id="基于应用层的解决方法"><a href="#基于应用层的解决方法" class="headerlink" title="基于应用层的解决方法"></a>基于应用层的解决方法</h3><p>在前端有一个基于应用层的负载调度器。当用户访问请求到达调度器时，请求会提交给作负载均衡调度的应用程序，分析请求，根据各个服务器的负载情况，选出一台服务器，重写请求并向选出的服务器访问，取得结果后，再返回给用户</p>
+<p>现网中用的就是这个方案</p>
+<p><img src="http://byliu.bj.openstorage.cn/byliu/基于应用层的解决办法.png" alt="基于应用层的解决方法"></p>
+<p>应用层方案总结</p>
+<p> 缺点</p>
+<ul>
+<li>系统处理开销特别大，致使系统的伸缩性有限。当请求到达负载均衡调度器至处理结束时，调度器需要进行四次从核心到用户空间或从用户空间到核心空间的上下文切换和内存复制；需要进行二次TCP连接，一次是从用户到调度器，另一次是从调度器到真实服务器；需要对请求进行分析和重写。这些处理都需要不小的ＣＰＵ、内存和网络等资源开销，且处理时间长。所构成系统的性能不能接近线性增加的，一般服务器组增至3或4台时，调度器本身可能会成为新的瓶颈。所以，这种基于应用层负载均衡调度的方法的伸缩性极其有限。</li>
+<li>本身会成为整个系统的瓶颈</li>
 </ul>
-</li>
-<li>负载(Load)<ul>
-<li>负载是对分散性要求的另一个纬度。既然不同的终端可以将相同的内容映射到不同的缓冲区中，那么对于一个特定的缓冲区而言，也可能被不同的用户映射为不同的内容。</li>
+<h3 id="基于IP层的解决方法"><a href="#基于IP层的解决方法" class="headerlink" title="基于IP层的解决方法"></a>基于IP层的解决方法</h3><p> 通过报文中的目标地址和端口，再加上负载均衡设备设置的服务器选择方式，决定最终选择的内部服务器</p>
+<p> 开源实例：LVS（Linux Virtual Server）</p>
+<p> LVS具体实现方式有</p>
+<ul>
+<li>NAT实现（VS/NAT）</li>
+<li>IP隧道实现（VS/TUN）</li>
+<li>直接路由实现（VS/DR）</li>
 </ul>
+<h4 id="LVS之NAT实现（VS-NAT）"><a href="#LVS之NAT实现（VS-NAT）" class="headerlink" title="LVS之NAT实现（VS/NAT）"></a>LVS之NAT实现（VS/NAT）</h4><p>通过NAT（Network Address Translation，网络地址转换） ，调度器重写请求报文的目标地址，根据预设的调度算法，将请求分派给后端的真实服务器；真实服务器的响应报文通过调度器时，报文的源地址被重写，再返回给客户，完成整个负载调度过程</p>
+<p><img src="http://byliu.bj.openstorage.cn/byliu/LVS之NAT实现（VS:NAT）.png" alt="LVS之NAT实现（VS/NAT）"></p>
+<p>VS/NAT总结</p>
+<p> 优点</p>
+<ul>
+<li><p>是服务器可以运行任何支持TCP/IP的操作系统，它只需要一个IP地址配置在调度器上，服务器组可以用私有的IP地址</p>
+<p>缺点</p>
+</li>
+<li><p>伸缩能力有限， 当服务器结点数到一定规模时，调度器本身有可能成为系统的新瓶颈，因为在 VS/NAT 中请求和响应报文都需要通过负载调度器</p>
 </li>
 </ul>
-<p>Swift使用该算法的主要目的是在改变集群的node数量时（增加/删除服务器），能够尽可能少地改变已存在key和node的映射关系，以满足单调性。一致性哈希一般两种思路：</p>
-<ol>
-<li>迁移为主要特点(swift初期采用)</li>
-<li>引入虚结点，减少移动为特点(swift现采用)</li>
-</ol>
-<p>具体步骤如下：</p>
-<ol>
-<li>首先求出每个节点(机器名或者是IP地址)的哈希值，并将其分配到一个圆环区间上（这里取0-2^32)。</li>
-<li>求出需要存储对象的哈希值，也将其分配到这个圆环上。</li>
-<li>从对象映射到的位置开始顺时针查找，将对象保存到找到的第一个节点上。</li>
-</ol>
-<p>其中这个从哈希到位置映射的圆环，叫做哈希环(Ring)。哈希环空间上的分布如下图所示：</p>
-<p><img src="http://byliu.bj.openstorage.cn/byliu/哈希环空间.png" alt="哈希环空间" title="哈希环空间"></p>
-<p>假设在这个环形哈希空间中，新增一个node5，node5被映射在node2和node4之间，那么受影响的将仅是沿node5逆时针遍历直到下一个node（node2）之间的对象（它们本来映射到node4上）。如下图所示：</p>
-<p><img src="http://byliu.bj.openstorage.cn/byliu/一致性哈希算法的数据移动.png" alt="一致性哈希算法的数据移动" title="一致性哈希算法的数据移动"></p>
-<p>通过前面的分析可以知道，一致性哈希算法对于节点的增加(或减少)都只需重定位环空间中的一小部分数据，具有较好的容错性和可扩展性。</p>
-<p>但是上边描述的一致性Hash算法还有两个潜在的问题:</p>
-<ol>
-<li>将节点hash后会不均匀地分布在环上，这样大量key在寻找节点时，会存在key命中各个节点的概率差别较大，无法实现有效的负载均衡。</li>
-<li>如有三个节点Node1,Node2,Node3，分布在环上时三个节点挨的很近，落在环上的key寻找节点时，大量key顺时针总是分配给Node2，而其它两个节点被找到的概率都会很小。</li>
-</ol>
-<p>为了解决这个问题，我们引入<strong>虚拟节点(Partition)</strong>的概念</p>
-<h3 id="虚拟节点-Partition"><a href="#虚拟节点-Partition" class="headerlink" title="虚拟节点(Partition)"></a>虚拟节点(Partition)</h3><p>前面也说道，一致性哈希算法在服务节点太少时，容易因为节点分部不均匀而造成数据倾斜问题。例如系统中只有两台服务器，其环分布如下：</p>
-<p><img src="http://byliu.bj.openstorage.cn/byliu/两节点不平衡环.png" alt="两节点不平衡环" title="两节点不平衡环"></p>
-<p>此时必然造成大量数据集中到Node A上，而只有极少量会定位到Node B上。</p>
-<p>考虑到哈希算法在node较少的情况下，改变node数会带来巨大的数据迁移。为此一致性哈希引入了“虚拟节点”的概念： “虚拟节点”是实际节点在环形空间的复制品，一个实际节点对应了若干个“虚拟节点”，“虚拟节点”在哈希空间中以哈希值排列。如下图：</p>
-<p><img src="http://byliu.bj.openstorage.cn/byliu/虚拟节点.jpg" alt="虚拟节点" title="虚拟节点"></p>
-<p>引入了“虚拟节点”后，映射关系就从[object—&gt;node]转换成了[object—&gt;virtual node—&gt; node]。查询object所在node的映射关系如下图所示。</p>
-<p><img src="http://byliu.bj.openstorage.cn/byliu/对象、虚结点、节点间的映射关系.jpg" alt="对象、虚结点、节点间的映射关系" title="对象、虚结点、节点间的映射关系"></p>
-<p>这样就解决了服务节点少时数据倾斜的问题。在实际应用中，通常将虚拟节点数设置为32甚至更大，因此即使很少的服务节点也能做到相对均匀的数据分布。</p>
-<h3 id="权重-weight"><a href="#权重-weight" class="headerlink" title="权重(weight)"></a>权重(weight)</h3><p>基于虚拟节点(partition)，引入weight的概念，目的是“能者多劳”：解决未来添加存储能力更大的node时，使得可以分配到更多的虚拟节点(partition)。例如，2T 容量的node的虚拟节点(partition)数为1T的两倍。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>以上就是一致性哈希算法在云存储swift中的应用了，swift中的核心组件——Ring的实现就是基于此，当然Ring在实现上还有更多细节上优化的地方，这里略过不讲。</p>
-<p>一致性哈希算法除了在云存储swift中解决存储数据节点均衡问题外，在很多场景下也得到了应用，比如分布式cache系统(参考资料1)、服务器均衡(参考资料3)等。</p>
-<p>本文只是简要介绍了这个算法，更深入的内容可以参看论文<a href="https://www.akamai.com/us/en/multimedia/documents/technical-publication/consistent-hashing-and-random-trees-distributed-caching-protocols-for-relieving-hot-spots-on-the-world-wide-web-technical-publication.pdf" target="_blank" rel="external">Consistent Hashing and Random Trees:Distributed Caching Protocols for Relieving Hot Spots On the World Wide Web</a>，同时提供一个<a href="http://www.codeproject.com/Articles/56138/Consistent-hashing" target="_blank" rel="external">C语言版本的实现</a>供参考。</p>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
-<li><p>核心论文：<a href="https://www.akamai.com/us/en/multimedia/documents/technical-publication/consistent-hashing-and-random-trees-distributed-caching-protocols-for-relieving-hot-spots-on-the-world-wide-web-technical-publication.pdf" target="_blank" rel="external">Consistent Hashing and Random Trees:Distributed Caching Protocols for Relieving Hot Spots On the World Wide Web</a></p>
+<h4 id="LVS之IP隧道实现（VS-TUN）"><a href="#LVS之IP隧道实现（VS-TUN）" class="headerlink" title="LVS之IP隧道实现（VS/TUN）"></a>LVS之IP隧道实现（VS/TUN）</h4><p>IP隧道（IP tunneling）是将一个IP报文封装在另一个IP报文的技术，这可以使得目标为一个IP地址的数据报文能被封装和转发到另一个IP地址</p>
+<p><img src="http://byliu.bj.openstorage.cn/byliu/LVS之IP隧道实现（VS:TUN）.png" alt="LVS之IP隧道实现（VS:TUN）"></p>
+<p>VS/TUN总结</p>
+<p> 优点</p>
+<ul>
+<li><p>本身不会成为系统的瓶颈，可以用来构建高性能的超级服务器</p>
+<p>缺点</p>
 </li>
-<li><p><a href="http://blog.csdn.net/kongqz/article/details/6695417" target="_blank" rel="external">memcache的一致性hash算法使用</a></p>
+<li><p>所有的服务器必须支持“IP Tunneling”或者“IP Encapsulation”协议</p>
 </li>
-<li><p><a href="http://www.cnblogs.com/haippy/archive/2011/12/10/2282943.html" target="_blank" rel="external">一致性Hash算法背景</a></p>
-</li>
-<li><p><a href="http://blog.csdn.net/caigen1988/article/details/7708806" target="_blank" rel="external">一致性哈希算法（用于解决服务器均衡问题）</a></p>
-</li>
-<li><p><a href="http://blog.csdn.net/cywosp/article/details/23397179/" target="_blank" rel="external">每天进步一点点——五分钟理解一致性哈希算法(consistent hashing)</a></p>
-</li>
-<li><p><a href="http://www.cnblogs.com/yuxc/archive/2012/06/22/2558312.html" target="_blank" rel="external">深入云存储系统Swift核心组件：Ring实现原理剖析</a></p>
-</li>
-<li><p><a href="http://www.openstack.cn/?p=303" target="_blank" rel="external">一致性哈希算法及其在分布式系统中的应用</a></p>
-</li>
-</ol>
+<li>IP  Tunneling 需要额外的开销，性能上不如 VS/DR</li>
+</ul>
+<h4 id="LVS之直接路由实现（VS-DR）"><a href="#LVS之直接路由实现（VS-DR）" class="headerlink" title="LVS之直接路由实现（VS/DR）"></a>LVS之直接路由实现（VS/DR）</h4><p>与VS/TUN中的类似，但它的报文转发方法有所不同， VS/DR通过改写请求报文的MAC地址，将请求发送到后端服务器，而后端服务器将响应直接返回给客户，要求调度器和后端服务器在同一物理网段内</p>
+<p><img src="http://byliu.bj.openstorage.cn/byliu/LVS之直接路由实现（VS:DR）.png" alt="LVS之直接路由实现（VS:DR）"></p>
+<p>VS/DR总结</p>
+<ul>
+<li>跟VS/TUN相比，这种方法没有IP隧道的开销，但是要求负载调度器与实际服务器都有一块网卡连在同一物理网段上，服务器网络设备（或者设备别名）不作ARP响应，或者能将报文重定向（Redirect）到本地的Socket端口上</li>
+</ul>
 
       
     </div>
@@ -433,9 +422,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/OpenStack-Swift/" rel="tag">#OpenStack Swift</a>
+            <a href="/tags/Linux/" rel="tag">#Linux</a>
           
-            <a href="/tags/一致性哈希/" rel="tag">#一致性哈希</a>
+            <a href="/tags/负载均衡/" rel="tag">#负载均衡</a>
           
         </div>
       
@@ -444,17 +433,13 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/04/04/python-dict几种遍历方式性能简单比较/" rel="next" title="python dict几种遍历方式性能简单比较">
-                <i class="fa fa-chevron-left"></i> python dict几种遍历方式性能简单比较
+              <a href="/2017/01/16/一致性哈希算法在Swift中的应用/" rel="next" title="一致性哈希算法在Swift中的应用">
+                <i class="fa fa-chevron-left"></i> 一致性哈希算法在Swift中的应用
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/03/12/对象存储与负载均衡/" rel="prev" title="对象存储与负载均衡">
-                对象存储与负载均衡 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -621,7 +606,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正文"><span class="nav-number">2.</span> <span class="nav-text">正文</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#普通哈希算法与场景分析"><span class="nav-number">2.1.</span> <span class="nav-text">普通哈希算法与场景分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一致性哈希算法"><span class="nav-number">2.2.</span> <span class="nav-text">一致性哈希算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟节点-Partition"><span class="nav-number">2.3.</span> <span class="nav-text">虚拟节点(Partition)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#权重-weight"><span class="nav-number">2.4.</span> <span class="nav-text">权重(weight)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#现网方案与问题"><span class="nav-number">2.</span> <span class="nav-text">现网方案与问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Load-Balance"><span class="nav-number">3.</span> <span class="nav-text">Load Balance</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本方法"><span class="nav-number">3.1.</span> <span class="nav-text">基本方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于RR-DNS的解决方法"><span class="nav-number">3.2.</span> <span class="nav-text">基于RR-DNS的解决方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于客户端的解决方法"><span class="nav-number">3.3.</span> <span class="nav-text">基于客户端的解决方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于应用层的解决方法"><span class="nav-number">3.4.</span> <span class="nav-text">基于应用层的解决方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于IP层的解决方法"><span class="nav-number">3.5.</span> <span class="nav-text">基于IP层的解决方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#LVS之NAT实现（VS-NAT）"><span class="nav-number">3.5.1.</span> <span class="nav-text">LVS之NAT实现（VS/NAT）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#LVS之IP隧道实现（VS-TUN）"><span class="nav-number">3.5.2.</span> <span class="nav-text">LVS之IP隧道实现（VS/TUN）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#LVS之直接路由实现（VS-DR）"><span class="nav-number">3.5.3.</span> <span class="nav-text">LVS之直接路由实现（VS/DR）</span></a></li></ol></li></ol></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">
@@ -896,9 +881,9 @@
 
     <script type="text/javascript">
       var disqus_shortname = 'byliu';
-      var disqus_identifier = '2017/01/16/一致性哈希算法在Swift中的应用/';
-      var disqus_title = '一致性哈希算法在Swift中的应用';
-      var disqus_url = 'http://byliu.github.io/2017/01/16/一致性哈希算法在Swift中的应用/';
+      var disqus_identifier = '2018/03/12/对象存储与负载均衡/';
+      var disqus_title = '对象存储与负载均衡';
+      var disqus_url = 'http://byliu.github.io/2018/03/12/对象存储与负载均衡/';
 
       function run_disqus_script(disqus_script){
         var dsq = document.createElement('script');

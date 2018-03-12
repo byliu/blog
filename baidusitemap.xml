@@ -4,6 +4,28 @@
 
     
   <url>
+    <loc>http://byliu.github.io/2018/03/12/%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E4%B8%8E%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/</loc>
+    <lastmod>2018-03-12T07:31:00.914Z</lastmod>
+    <data>
+        <display>
+        <title>对象存储与负载均衡</title>
+        <pubTime>2018-03-12T06:48:38.000Z</pubTime>
+        
+        <tag>Linux</tag>
+         
+        <tag>负载均衡</tag>
+         
+         
+           
+             
+              <breadCrumb title="Linux" url="http://byliu.github.io/categories/Linux/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://byliu.github.io/2016/03/30/Git-gitignore%E5%A4%B1%E6%95%88%EF%BC%8C%E6%97%A0%E6%B3%95%E5%8F%96%E6%B6%88%E6%9F%90%E6%96%87%E4%BB%B6-%E6%96%87%E4%BB%B6%E5%A4%B9%E8%B7%9F%E8%B8%AA%EF%BC%8C%E6%88%96%E6%97%A0%E6%B3%95%E8%B7%9F%E8%B8%AA%E6%9F%90%E6%96%87%E4%BB%B6-%E6%96%87%E4%BB%B6%E5%A4%B9%E7%9A%84%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/</loc>
     <lastmod>2017-01-16T10:25:31.000Z</lastmod>
     <data>
@@ -17,6 +39,31 @@
            
              
               <breadCrumb title="Git" url="http://byliu.github.io/categories/Git/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://byliu.github.io/2017/01/16/%E4%B8%80%E8%87%B4%E6%80%A7%E5%93%88%E5%B8%8C%E7%AE%97%E6%B3%95%E5%9C%A8Swift%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/</loc>
+    <lastmod>2017-01-16T10:25:31.000Z</lastmod>
+    <data>
+        <display>
+        <title>一致性哈希算法在Swift中的应用</title>
+        <pubTime>2017-01-16T10:25:31.000Z</pubTime>
+        
+        <tag>OpenStack Swift</tag>
+         
+        <tag>一致性哈希</tag>
+         
+         
+           
+             
+              <breadCrumb title="OpenStack" url="http://byliu.github.io/categories/OpenStack/"/>
+          
+             
+              <breadCrumb title="Swift" url="http://byliu.github.io/categories/OpenStack/Swift/"/>
           
         </display>
     </data>
@@ -79,31 +126,6 @@
         <tag>Linux</tag>
          
         <tag>Rsyslog</tag>
-         
-         
-           
-             
-              <breadCrumb title="OpenStack" url="http://byliu.github.io/categories/OpenStack/"/>
-          
-             
-              <breadCrumb title="Swift" url="http://byliu.github.io/categories/OpenStack/Swift/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://byliu.github.io/2017/01/16/%E4%B8%80%E8%87%B4%E6%80%A7%E5%93%88%E5%B8%8C%E7%AE%97%E6%B3%95%E5%9C%A8Swift%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/</loc>
-    <lastmod>2017-01-16T10:25:31.000Z</lastmod>
-    <data>
-        <display>
-        <title>一致性哈希算法在Swift中的应用</title>
-        <pubTime>2017-01-16T10:25:31.000Z</pubTime>
-        
-        <tag>OpenStack Swift</tag>
-         
-        <tag>一致性哈希</tag>
          
          
            
