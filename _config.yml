@@ -104,5 +104,9 @@ search:
 avatar: /images/scalacat.png
 
 #duoshuo
-duoshuo_shortname: byliu
-duoshuo_share: true
+#duoshuo_shortname: byliu
+#duoshuo_share: true
+
+#disqus
+disqus_shortname: byliu
+disqus_share: true

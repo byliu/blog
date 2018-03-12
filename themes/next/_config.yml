@@ -174,7 +174,7 @@ mathjax: true
 #duoshuo_shortname:
 
 # Disqus
-#disqus_shortname:
+disqus_shortname: byliu
 
 # Baidu Share
 # Available value:
@@ -204,10 +204,10 @@ mathjax: true
 # Make duoshuo show UA
 # user_id must NOT be null when admin_enable is true!
 # you can visit http://dev.duoshuo.com get duoshuo user id.
-duoshuo_info:
-  ua_enable: true
-  admin_enable: true
-  user_id: 6266641033761654000
+#duoshuo_info:
+#  ua_enable: true
+#  admin_enable: true
+#  user_id: 6266641033761654000
   #admin_nickname: ROOT
 
 
